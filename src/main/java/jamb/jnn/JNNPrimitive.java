@@ -1,7 +1,7 @@
 package jamb.jnn;
 
 public enum JNNPrimitive {
-	String(0x01), Number(0x02), Boolean(0x03), Null(0x04);
+	String(0x01), Number(0x02), Boolean(0x03), Null(0x04), JNN(0x05);
 	
 	public final int identifier;
 	JNNPrimitive(int identifier) {

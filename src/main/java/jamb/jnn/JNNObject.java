@@ -27,6 +27,8 @@ public class JNNObject {
 			return JNNPrimitive.Number;
 		else if (obj.getClass() == Boolean.class)
 			return JNNPrimitive.Boolean;
+		else if (obj.getClass() == JNNObject.class)
+			return JNNPrimitive.JNN;
 		// maybe throw a null pointer?
 		return null;
 	}
@@ -52,6 +54,7 @@ public class JNNObject {
 	}
 
 	public void set(String key, Object val) {
+		// TODO: add recursive checking to make sure we arent trying to store ourselves
 		if (key == null)
 			throw new NullPointerException();
 		if (val instanceof Number) {
@@ -61,8 +64,12 @@ public class JNNObject {
 			;
 		else if (val instanceof Boolean)
 			;
+		else if (val instanceof JNNObject)
+			;
 		else if (val == null)
 			val = null;
+		else if (val.getClass().isArray())
+			throw new IllegalArgumentException("Arrays are not supported. ");
 		else
 			val = val.toString();
 		jnnMap.put(key, val);
@@ -73,6 +80,13 @@ public class JNNObject {
 		if (obj != null || has(key))
 			return obj;
 		throw new JNNDoesNotExistException(key);
+	}
+	
+	public JNNObject getJNNObject(String key) {
+		Object obj = getObject(key);
+		if(obj instanceof JNNObject)
+			return (JNNObject) obj;
+		throw new JNNWrongTypeException(key, JNNPrimitive.JNN, getPrimitive(obj));
 	}
 
 	public long getNumber(String key) {

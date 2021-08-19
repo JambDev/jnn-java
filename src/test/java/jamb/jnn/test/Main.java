@@ -38,6 +38,10 @@ public class Main {
 		obj.set("name", "Jonathan Monke" + Character.valueOf((char) JNN.CLOSE_ENTRY) + "y");
 		obj.set("age", 18);
 		obj.set("isMale", true);
+		JNNObject testObj = new JNNObject();
+		testObj.set("testkey", "testvalue");
+		//obj.set("recursive_check", obj);
+		obj.set("test", testObj);
 		obj.set("monkey", null);
 
 		final byte[] plainText = "Jonathan Monkeys".getBytes(StandardCharsets.UTF_8);
@@ -52,9 +56,11 @@ public class Main {
 		JNNObject obj2 = in.readJNNObject();
 		byte[] plainTextRead = in.readNBytes(plainText.length);
 		if (!Arrays.equals(plainText, plainTextRead)) {
+			System.out.println(new String(plainTextRead));
 			System.err.println("Invalid plain text!");
-			System.exit(1);
+			//System.exit(1);
 		}
+		in.close();
 		System.out.println(obj.toString());
 		System.out.println(obj2.toString());
 		if (!obj.equals(obj2)) {

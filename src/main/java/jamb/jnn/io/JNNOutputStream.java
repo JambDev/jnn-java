@@ -72,6 +72,11 @@ public class JNNOutputStream extends OutputStream {
 				break;
 			case Null:
 				break;
+			case JNN:
+				JNNOutputStream jos = new JNNOutputStream(out);
+				jos.writeJNNObject((JNNObject) entry.getValue());
+				jos = null;
+				break;
 			}
 			out.write(CLOSE_ENTRY);
 		}

@@ -95,6 +95,12 @@ public class JNNInputStream extends InputStream {
 					if(b == ESCAPE) b = in.read();
 				val = null;
 				break;
+			case JNN:
+				JNNInputStream jis = new JNNInputStream(in);
+				val = jis.readJNNObject();
+				jis = null;
+				in.read();
+				break;
 			}
 			jnnObj.set(key.toString(JNN.CHARSET), val);
 		}
