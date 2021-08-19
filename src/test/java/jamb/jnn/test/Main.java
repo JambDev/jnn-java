@@ -35,7 +35,7 @@ public class Main {
 
 	public static void read_write_test() throws IOException {
 		JNNObject obj = new JNNObject();
-		obj.set("name", "Jonathan Monke" + JNN.CLOSE_ENTRY + "y");
+		obj.set("name", "Jonathan Monke" + Character.valueOf((char) JNN.CLOSE_ENTRY) + "y");
 		obj.set("age", 18);
 		obj.set("isMale", true);
 		obj.set("monkey", null);
