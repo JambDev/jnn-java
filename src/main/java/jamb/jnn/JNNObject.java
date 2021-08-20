@@ -32,6 +32,10 @@ public class JNNObject {
 		// maybe throw a null pointer?
 		return null;
 	}
+	
+	public int size() {
+		return jnnMap.size();
+	}
 
 	public Collection<Entry<String, Object>> entries() {
 		return jnnMap.entrySet();
@@ -49,11 +53,12 @@ public class JNNObject {
 		return jnnMap.containsKey(key);
 	}
 
-	public void delete(String key) {
+	public JNNObject delete(String key) {
 		jnnMap.remove(key);
+		return this;
 	}
 
-	public void set(String key, Object val) {
+	public JNNObject set(String key, Object val) {
 		// TODO: add recursive checking to make sure we arent trying to store ourselves
 		if (key == null)
 			throw new NullPointerException();
@@ -73,8 +78,12 @@ public class JNNObject {
 		else
 			val = val.toString();
 		jnnMap.put(key, val);
+		return this;
 	}
 
+	/**
+	 * @throws JNNDoesNotExistException If the entry doesn't exist (NOT null)
+	 */
 	public Object getObject(String key) {
 		Object obj = jnnMap.get(key);
 		if (obj != null || has(key))
