@@ -12,6 +12,7 @@ import java.io.InputStream;
 
 import jamb.jnn.JNN;
 import jamb.jnn.JNNObject;
+import jamb.jnn.JNNOptions;
 import jamb.jnn.JNNPrimitive;
 import jamb.jnn.io.exception.JNNInvalidHeaderException;
 import jamb.jnn.io.exception.JNNInvalidPrimitiveException;
@@ -34,7 +35,8 @@ public class JNNInputStream extends InputStream {
 		// read header
 		byte[] header = new byte[6];
 		in.read(header, 0, header.length);
-		if (!JNN.validateHeader(header))
+		JNNOptions opts = JNN.validateHeader(header);
+		if (opts == null)
 			throw new JNNInvalidHeaderException();
 		// close header
 		in.read();
@@ -62,7 +64,7 @@ public class JNNInputStream extends InputStream {
 				if (boolVal == -1)
 					throw new EOFException("Boolean entry is corrupted #" + key);
 				val = Boolean.valueOf(boolVal == 0 ? false : true);
-				in.read();
+				if(opts.exclusivelyCloseEntry) in.read();
 				break;
 			case Number:
 				byte[] longBytes = new byte[8];
@@ -77,7 +79,7 @@ public class JNNInputStream extends InputStream {
 						| ((long) longBytes[3] & 0xff) << 24 | ((long) longBytes[2] & 0xff) << 16
 						| ((long) longBytes[1] & 0xff) << 8 | ((long) longBytes[0] & 0xff);
 				val = Long.valueOf(l);
-				in.read();
+				if(opts.exclusivelyCloseEntry) in.read();
 				break;
 			case String:
 				ByteArrayOutputStream valueBytes = new ByteArrayOutputStream();
@@ -91,15 +93,17 @@ public class JNNInputStream extends InputStream {
 				val = valueBytes.toString(JNN.CHARSET);
 				break;
 			case Null:
-				while ((b = in.read()) != CLOSE_ENTRY)
-					if(b == ESCAPE) b = in.read();
+				if(opts.exclusivelyCloseEntry) {
+					while ((b = in.read()) != CLOSE_ENTRY)
+						if(b == ESCAPE) b = in.read();
+				}
 				val = null;
 				break;
 			case JNN:
 				JNNInputStream jis = new JNNInputStream(in);
 				val = jis.readJNNObject();
 				jis = null;
-				in.read();
+				if(opts.exclusivelyCloseEntry) in.read();
 				break;
 			}
 			jnnObj.set(key.toString(JNN.CHARSET), val);

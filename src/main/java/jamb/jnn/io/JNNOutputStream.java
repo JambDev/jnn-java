@@ -69,6 +69,7 @@ public class JNNOutputStream extends OutputStream {
 				break;
 			case String:
 				out.write(escapeBytes(((String) entry.getValue()).getBytes(JNN.CHARSET)));
+				out.write(CLOSE_ENTRY);
 				break;
 			case Null:
 				break;
@@ -78,7 +79,6 @@ public class JNNOutputStream extends OutputStream {
 				jos = null;
 				break;
 			}
-			out.write(CLOSE_ENTRY);
 		}
 		out.write(END);
 	}
