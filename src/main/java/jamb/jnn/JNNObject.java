@@ -126,8 +126,26 @@ public class JNNObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof JNNObject)
-			return jnnMap.keySet().equals(((JNNObject) obj).jnnMap.keySet());
+		if(obj instanceof JNNObject) {
+			JNNObject jnnObj = (JNNObject) obj;
+			if(jnnObj.size() != this.size())
+				return false;
+			for(var entry : jnnObj.entries()) {
+				try {
+					Object our = this.getObject(entry.getKey());
+					if(our == null) {
+						if(entry.getValue() == null) continue;
+						else return false;
+					}
+					if(!our.equals(entry.getValue())) return false;
+				} catch(JNNDoesNotExistException e) {
+					return false;
+				}
+				
+			}
+			return true;
+			//return jnnMap.keySet().equals(((JNNObject) obj).jnnMap.keySet());
+		}
 		return jnnMap.equals(obj);
 	}
 }
