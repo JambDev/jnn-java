@@ -52,7 +52,7 @@ public class JNNInputStream extends InputStream {
 			ByteArrayOutputStream key = new ByteArrayOutputStream();
 			while ((b = in.read()) != CLOSE_KEY) {
 				if (b == -1)
-					throw new EOFException(primitiveType.name() + " entry's key was never closed");
+					throw new IOException(primitiveType.name() + " entry's key was never closed");
 				if (b == ESCAPE)
 					b = in.read();
 				key.write(b);
@@ -61,8 +61,8 @@ public class JNNInputStream extends InputStream {
 			switch (primitiveType) {
 			case Boolean:
 				int boolVal = in.read();
-				if (boolVal == -1)
-					throw new EOFException("Boolean entry is corrupted #" + key);
+				if (boolVal != 0 && boolVal != 1)
+					throw new IOException("Boolean entry is corrupted #" + key);
 				val = Boolean.valueOf(boolVal == 0 ? false : true);
 				if(opts.exclusivelyCloseEntry) in.read();
 				break;
@@ -70,7 +70,7 @@ public class JNNInputStream extends InputStream {
 				byte[] longBytes = new byte[8];
 				in.read(longBytes, 0, longBytes.length);
 				for (byte b1 : longBytes) {
-					if (b1 == -1)
+					if ((b1 & 0xff) == -1)
 						throw new EOFException("Number entry is corrupted #" + key);
 				}
 				/* https://stackoverflow.com/a/27610608 */

@@ -91,6 +91,7 @@ public class Main {
 		JNNObject obj = new JNNObject();
 		obj.set("name", "Jonathan Monke" + Character.valueOf((char) JNN.CLOSE_ENTRY) + "y");
 		obj.set("age", 18);
+		obj.set("random_long", 8573157376L);
 		obj.set("isMale", true);
 		JNNObject testObj = new JNNObject();
 		testObj.set("testkey", "testvalue");
